@@ -7,31 +7,40 @@
 class I2CDisplay
 {
 public:
+  LiquidCrystal_I2C lcd;
+
   I2CDisplay(uint8_t lcdAddr, uint8_t nLine, uint8_t nColumns);
   void begin();
 
-  template<typename T>
-  void logSensorReading(uint8_t row, T, float val);
+  template<typename T, typename T2>
+  void logValue(uint8_t row, T, T2 val);
 
 
 private:
-  LiquidCrystal_I2C lcd;
   uint8_t _nLine;
   uint8_t _nColumns;
+  uint32_t lastUpdate = 0;
+  uint32_t updateInterval = 100;
 };
 
-template<typename T>
-void I2CDisplay::logSensorReading(uint8_t row, T str, float val)
+template<typename T, typename T2>
+void I2CDisplay::logValue(uint8_t row, T str, T2 val)
 {
+    // if(millis() - lastUpdate > updateInterval)
+    // {
+      
     this->lcd.setCursor(0, row);
     for (size_t i = 0; i < this->_nColumns; i++)
     {
       this->lcd.print(" ");
     }
-
     this->lcd.setCursor(0, row);
+    this->lcd.print("Velocidade: ");
     this->lcd.print(val);
-    this->lcd.print(" ");
     this->lcd.print(str);
+    lastUpdate = millis();
+
+    // }
+    
 }
 #endif
